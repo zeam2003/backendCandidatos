@@ -24,13 +24,19 @@ router.get('/', getCandidatos);
 router.post('/', [
         validarJWT,
         check('nombre', 'El nombre del candidato es necesario').not().isEmpty(),
-        check('busqueda', 'El ID de la búsqueda no es valida').isMongoId(),
+        check('busqueda', 'El ID del candidato no es valido').isMongoId(),
         validarCampos
     ],
     crearCandidatos
 );
 
-router.put('/:id', [],
+// Actualizar Candidato
+router.put('/:id', [
+        validarJWT,
+        check('nombre', 'El nombre del candidato es necesario').not().isEmpty(),
+        check('busqueda', 'El ID del candidato no es valido').isMongoId(),
+        validarCampos
+    ],
     actualizarCandidatos
 );
 

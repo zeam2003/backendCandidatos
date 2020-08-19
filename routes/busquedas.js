@@ -29,11 +29,16 @@ router.post('/', [
     crearBusquedas
 );
 
-router.put('/:id', [],
+router.put('/:id', [
+        validarJWT,
+        check('nombre', 'El nombre de la busqueda es necesaria').not().isEmpty(),
+        validarCampos
+    ],
     actualizarBusquedas
 );
 
 router.delete('/:id',
+    validarJWT,
     borrarBusquedas
 );
 

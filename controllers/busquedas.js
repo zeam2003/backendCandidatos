@@ -40,21 +40,75 @@ const crearBusquedas = async(req, res = response) => {
 
 };
 
-const actualizarBusquedas = (req, res = response) => {
+const actualizarBusquedas = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'actualizarBusquedas'
-    });
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+
+        const busqueda = await Busqueda.findById(id);
+
+        if (!busqueda) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Busqueda no encontrada por el ID'
+            });
+        }
+
+        const cambiosBusqueda = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const busquedaActualizada = await Busqueda.findByIdAndUpdate(id, cambiosBusqueda, { new: true });
+
+        res.json({
+            ok: true,
+            Busqueda: busquedaActualizada
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        });
+    }
+
+
 };
 
-const borrarBusquedas = (req, res = response) => {
+const borrarBusquedas = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'borrarBusquedas'
-    });
-};
+    const id = req.params.id;
+
+    try {
+
+        const busqueda = await Busqueda.findById(id);
+
+        if (!busqueda) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Busqueda no encontrada por el ID'
+            });
+        }
+
+        await Busqueda.findByIdAndDelete(id);
+
+        res.json({
+            ok: true,
+            msg: 'Busqueda Eliminada'
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        });
+    }
+}
 
 
 module.exports = {
