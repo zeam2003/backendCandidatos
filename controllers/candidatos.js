@@ -2,6 +2,9 @@ const { response } = require('express');
 
 const Candidato = require('../models/candidato');
 
+const Momento = require('moment');
+require('moment/locale/es');
+
 const getCandidatos = async(req, res = response) => {
 
     const candidatos = await Candidato.find()
@@ -14,11 +17,37 @@ const getCandidatos = async(req, res = response) => {
     });
 };
 
+const getCandidatoById = async(req, res = response) => {
+
+    const id = req.params.id;
+    console.log('al inicio en el server tengo: ', id);
+
+    try {
+        const candidatos = await Candidato.findById(id)
+            .populate('usuario', 'nombre email  img')
+            .populate('busqueda', 'nombre img');
+
+        res.json({
+            ok: true,
+            candidatos
+        });
+        console.log('En el servidor tengo ', candidatos._id);
+    } catch (error) {
+        console.log(error);
+        res.json({
+            ok: true,
+            msg: 'hable con el administrador'
+        });
+    }
+};
+
+
 const crearCandidatos = async(req, res = response) => {
 
     const uid = req.uid;
     const candidato = new Candidato({
         usuario: uid,
+        created: Momento().format('LLLL'),
         ...req.body
     });
 
@@ -114,5 +143,6 @@ module.exports = {
     getCandidatos,
     crearCandidatos,
     actualizarCandidatos,
-    borrarCandidatos
+    borrarCandidatos,
+    getCandidatoById
 };

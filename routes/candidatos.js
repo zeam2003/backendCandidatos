@@ -13,12 +13,13 @@ const {
     getCandidatos,
     crearCandidatos,
     actualizarCandidatos,
-    borrarCandidatos
+    borrarCandidatos,
+    getCandidatoById
 } = require('../controllers/candidatos');
 
 const router = Router();
 
-router.get('/', getCandidatos);
+router.get('/', validarJWT, getCandidatos);
 
 // Crear Candidato
 router.post('/', [
@@ -41,7 +42,14 @@ router.put('/:id', [
 );
 
 router.delete('/:id',
+    validarJWT,
     borrarCandidatos
 );
+
+router.get('/:id', [
+    validarJWT,
+    // check('candidato', 'El ID del candidato no es valido').isMongoId(),
+    getCandidatoById
+]);
 
 module.exports = router;

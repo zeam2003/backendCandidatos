@@ -2,6 +2,9 @@ const { response } = require('express');
 
 const Busqueda = require('../models/busqueda');
 
+const Momento = require('moment');
+require('moment/locale/es');
+
 const getBusquedas = async(req, res = response) => {
 
     const busquedas = await Busqueda.find()
@@ -16,8 +19,12 @@ const getBusquedas = async(req, res = response) => {
 const crearBusquedas = async(req, res = response) => {
 
     const uid = req.uid;
+    const creador = req.uid;
+    const localeArg = Momento.locale('es');
     const busqueda = new Busqueda({
         usuario: uid,
+        created: Momento().format('LLLL'),
+        creadoPor: creador,
         ...req.body
     });
 

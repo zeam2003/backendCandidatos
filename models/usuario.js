@@ -2,6 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const UsuarioSchema = Schema({
 
+    created: {
+        type: String
+    },
     nombre: {
         type: String,
         required: true
@@ -28,6 +31,10 @@ const UsuarioSchema = Schema({
         type: Boolean,
         default: false
     },
+    estado: {
+        type: Boolean,
+        default: true
+    }
 });
 
 UsuarioSchema.method('toJSON', function() {

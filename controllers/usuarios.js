@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/jwt');
 
+
 const getUsuarios = async(req, res) => {
 
     const desde = Number(req.query.desde) || 0;
@@ -18,7 +19,7 @@ const getUsuarios = async(req, res) => {
 
     const [usuarios, total] = await Promise.all([
         Usuario
-        .find({}, 'nombre email img role google')
+        .find({}, 'nombre email img role google estado')
         .skip(desde)
         .limit(5),
         Usuario.countDocuments()
@@ -35,8 +36,6 @@ const crearUsuarios = async(req, res = response) => {
 
     const { email, password } = req.body;
 
-
-
     try {
 
         const existeEmail = await Usuario.findOne({ email });
@@ -49,6 +48,7 @@ const crearUsuarios = async(req, res = response) => {
         }
 
         const usuario = new Usuario(req.body);
+        usuario.created = new Date();
 
         // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
@@ -78,6 +78,7 @@ const crearUsuarios = async(req, res = response) => {
 
 };
 
+// Actualizar Usuario
 const actualizarUsuario = async(req, res = response) => {
 
 
@@ -98,7 +99,7 @@ const actualizarUsuario = async(req, res = response) => {
         }
 
         // Actualización
-        const { password, google, email, ...campos } = req.body;
+        const { password, google, email, estado, ...campos } = req.body;
 
         if (usuarioDB.email !== email) {
 
@@ -111,8 +112,14 @@ const actualizarUsuario = async(req, res = response) => {
             }
         }
 
-        campos.email = email;
-
+        if (!usuarioDB.google) {
+            campos.email = email;
+        } else if (usuarioDB.email !== email) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de Google no pueden cambiar su cuenta'
+            });
+        }
 
         const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
 
@@ -130,6 +137,7 @@ const actualizarUsuario = async(req, res = response) => {
     }
 };
 
+// Actualizar usuario por Estado
 
 // Borrar usuario
 const borrarUsuario = async(req, res = response) => {

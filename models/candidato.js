@@ -2,6 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const CandidatoSchema = Schema({
 
+    created: {
+        type: String
+    },
     nombre: {
         type: String,
         required: true
