@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 
 const express = require('express');
 const cors = require('cors');
@@ -28,6 +29,11 @@ app.use('/api/todo', require('./routes/buscadores'));
 app.use('/api/upload', require('./routes/uploads'));
 app.use('/api/perfiles', require('./routes/perfiles'));
 app.use('/api/login', require('./routes/auth'));
+
+// lo ultimo
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public/index.html'));
+});
 
 
 app.listen(process.env.PORT, () => {
