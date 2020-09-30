@@ -48,8 +48,11 @@ const crearCandidatos = async(req, res = response) => {
     const candidato = new Candidato({
         usuario: uid,
         created: Momento().format('LLLL'),
+        telefono: req.body.telefono,
         ...req.body
     });
+
+    // const telefono = req.body.telefono;
 
     try {
 
@@ -74,6 +77,8 @@ const actualizarCandidatos = async(req, res = response) => {
 
     const id = req.params.id;
     const uid = req.uid;
+    //const telBody = req.body.telefono;
+
 
     try {
 
@@ -85,17 +90,25 @@ const actualizarCandidatos = async(req, res = response) => {
                 msg: 'Candidato no encontrado por el ID'
             });
         }
+        /* 
+                const arrayActualizado = await Candidato.findByIdAndUpdate(id, { $push: { "telefono": "15315" } }, { new: true });
+                console.log('esto esta aca ahora', arrayActualizado); */
 
         const cambiosCandidato = {
+            // telefono: { $push: { numero: req.body.telefono } },
             ...req.body,
             usuario: uid
-        }
+        };
+
+        //const candidatoActualizado = await Candidato.findByIdAndUpdate(id, { $push: { telefono: { numero: telBody } } }, { new: true });
 
         const candidatoActualizado = await Candidato.findByIdAndUpdate(id, cambiosCandidato, { new: true });
+        // const telefonoActualizado = await Candidato.findByIdAndUpdate(id, { telefono: { $push: { numero: req.body.telefono } } }, { upsert: true });
 
         res.json({
             ok: true,
             Candidato: candidatoActualizado
+                // telefonoActualizado: telefonoActualizado
         });
 
     } catch (error) {

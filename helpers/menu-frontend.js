@@ -7,10 +7,10 @@ const getMenuFrontEd = (role = 'USER_ROLE') => {
             icono: 'mdi mdi-gauge',
             submenu: [
                 { titulo: 'Principal', url: '/' },
-                { titulo: 'Progreso', url: 'progress' },
-                { titulo: 'Promesas', url: 'promesas' },
-                { titulo: 'Graficas', url: 'graficas' },
-                { titulo: 'Rxjs', url: 'rxjs' },
+                //{ titulo: 'Progreso', url: 'progress' },
+                //{ titulo: 'Promesas', url: 'promesas' },
+                //{ titulo: 'Graficas', url: 'graficas' },
+                //{ titulo: 'Rxjs', url: 'rxjs' },
             ]
         },
         {

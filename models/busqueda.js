@@ -43,6 +43,9 @@ const BusquedaSchema = Schema({
         type: String,
         default: 'Sin modificaciones'
     },
+    numBusqueda: {
+        type: Number
+    },
     usuario: {
         require: true,
         type: Schema.Types.ObjectId,

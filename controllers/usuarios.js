@@ -32,6 +32,36 @@ const getUsuarios = async(req, res) => {
     });
 };
 
+const verificarEmail = async(req, res = response) => {
+    const email = req.params.campo;
+    console.log(email);
+
+    try {
+        const existeEmail = await Usuario.findOne({ email });
+
+        if (existeEmail) {
+            console.log('estoy aca', this.existeEmail);
+            return res.status(400).json({
+                ok: false,
+                msg: 'El correo está registrado'
+
+            });
+
+        } else {
+            return res.status(200).json({
+                ok: true,
+                msg: 'usuario disponible'
+            });
+        }
+
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Ocurrio un error, contacte al administrador'
+        })
+    }
+}
+
 const crearUsuarios = async(req, res = response) => {
 
     const { email, password } = req.body;
@@ -176,5 +206,6 @@ module.exports = {
     getUsuarios,
     crearUsuarios,
     actualizarUsuario,
-    borrarUsuario
+    borrarUsuario,
+    verificarEmail
 };
