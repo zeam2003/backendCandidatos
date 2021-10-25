@@ -1,137 +1,256 @@
 const { response } = require('express');
 
 const Perfil = require('../models/perfil');
+const Usuario = require('../models/usuario');
 
 const Momento = require('moment');
 require('moment/locale/es');
 const { generarJWT } = require('../helpers/jwt');
 
-
-const getPerfiles = async(req, res = response) => {
+// Obtener Perfiles
+const getPerfiles = async(req, res) => {
 
     const desde = Number(req.query.desde) || 0;
-    /* console.log(desde);
 
-    const usuarios = await Usuario
-        .find({}, 'nombre email role google')
-        .skip(desde)
-        .limit(5);
-
-    const total = await Usuario.count(); */
 
     const [perfiles, total] = await Promise.all([
         Perfil
-        .find({}, 'nombre')
-        .populate('usuario', 'nombre email img')
+        .find({}, 'areaExperiencia tecnologia perfilado')
         .skip(desde)
         .limit(5),
         Perfil.countDocuments()
     ]);
+
+    if (total === 0) {
+        res.json({
+            ok: false,
+            msg: 'No se encontraron perfiles',
+            total
+        });
+    }
 
     res.json({
         ok: true,
         perfiles,
         total
     });
+
+
 };
 
-const crearPerfiles = async(req, res = response) => {
-
-    const uid = req.uid;
-    const perfil = new Perfil({
-        usuario: uid,
-        created: Momento().format('LLLL'),
-        ...req.body
-    });
+// Obtener Perfiles Tecnologia
+const getPerfilesTecnologia = async(req, res) => {
 
 
-    try {
+    const [perfiles, total] = await Promise.all([
+        Perfil
+        .find({}, 'tecnologia'),
+        Perfil.countDocuments()
+    ]);
 
-        const perfilDB = await perfil.save();
-
+    if (total === 0) {
         res.json({
-            ok: true,
-            perfiles: perfilDB
-        });
-
-    } catch (error) {
-        res.status(500).json({
             ok: false,
-            msg: 'Contactese con el administrador'
+            msg: 'No se encontraron perfiles',
+            total
         });
     }
 
-    /* 
-        const uid = req.uid;
+    res.json({
+        ok: true,
+        perfiles,
+        total
+    });
 
+};
+
+
+// Obtener Perfiles Tecnologia
+const getPerfilesTecnologia2 = async(req, res) => {
+
+    const valor = req.params.busqueda;
+
+    console.log(valor);
+    const [perfiles, total] = await Promise.all([
+        Perfil.perfilado
+        .find({}, { perfilado: valor }),
+        Perfil.countDocuments()
+    ]);
+
+    if (total === 0) {
+        res.json({
+            ok: false,
+            msg: 'No se encontraron perfiles',
+            total
+        });
+    }
+
+    res.json({
+        ok: true,
+        perfiles,
+        total
+    });
+
+};
+
+
+// Obtener Perfiles Tecnologia
+const getPerfilesTecnologia3 = async(req, res) => {
+
+
+    const [perfiles, total] = await Promise.all([
+        Perfil
+        .find({}, 'perfilado'),
+        Perfil.countDocuments()
+    ]);
+
+    if (total === 0) {
+        res.json({
+            ok: false,
+            msg: 'No se encontraron perfiles',
+            total
+        });
+    }
+
+    res.json({
+        ok: true,
+        perfiles,
+        total
+    });
+
+};
+
+
+/* const getPerfilesTecnologiaPerfil = async(req, res) => {
+
+    const busqueda = req.params.busqueda;
+    const regex = new RegExp(busqueda, 'i');
+    const [perfiles, total] = await Promise.all([
+        Perfil
+        .find({}, regex),
+        Perfi.countDocuments()
+    ]);
+
+    if (total === 0) {
+        res.json({
+            ok: false,
+            msg: 'No se encontraron perfiles',
+            total
+        });
+    }
+
+    res.json({
+        ok: true,
+        perfiles,
+        total
+    });
+}
+ */
+// Obtener Perfiles Tecnologia
+const getPerfilesAreaExperiencia = async(req, res) => {
+
+
+    const [perfiles, total] = await Promise.all([
+        Perfil
+        .find({}, 'areaExperiencia'),
+        Perfil.countDocuments()
+    ]);
+
+    if (total === 0) {
+        res.json({
+            ok: false,
+            msg: 'No se encontraron perfiles',
+            total
+        });
+    }
+
+    res.json({
+        ok: true,
+        perfiles,
+        total
+    });
+
+};
+
+// Crear Perfiles
+const crearPerfiles = async(req, res = response) => {
+
+    // const { email, password } = req.body;
+
+    try {
+
+
+        const uid = req.uid;
         console.log(req.uid);
 
-        const { nombre } = req.body;
+        const perfil = new Perfil(req.body);
+        perfil.created = new Date();
+        perfil.usuario = uid;
+        perfil.perfilado = req.body.perfilado;
 
-        const perfil = new Perfil({
-            usuario: uid,
-            created: Momento().format('LLLL'),
-            ...req.body
-        });
+        console.log(uid);
 
+        // Guardar perfil 
         await perfil.save();
 
         res.json({
             ok: true,
-            Perfil: perfil
+            perfil
         });
-     */
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado - revisar logs'
+        });
+    }
 };
 
-// Actualizar Usuario
-const actualizarUsuario = async(req, res = response) => {
+// Actualizar Perfil
+
+const actualizarPerfil = async(req, res = response) => {
 
 
     // TODO: validar token y comprobar si es el usuario correcto
 
     const uid = req.params.id;
 
+    console.log(uid);
+
 
     try {
 
-        const usuarioDB = await Usuario.findById(uid);
+        const perfilDB = await Perfil.findById(uid);
 
-        if (!usuarioDB) {
+        if (!perfilDB) {
             return res.status(404).json({
                 ok: false,
-                msg: 'No existe un usuario con ese id'
+                msg: 'No existe perfil con ese id'
             });
         }
 
         // Actualización
-        const { password, google, email, estado, ...campos } = req.body;
+        const { perfilado, ...campos } = req.body;
 
-        if (usuarioDB.email !== email) {
+        const cambiosPerfil = {
+            // telefono: { $push: { numero: req.body.telefono } },
 
-            const existeEmail = await Usuario.findOne({ email });
-            if (existeEmail) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Ya existe un usuario con ese email'
-                });
-            }
-        }
+            perfilado: { $push: { perfilado: req.body.perfilado } },
+            ...req.body,
+        };
 
-        if (!usuarioDB.google) {
-            campos.email = email;
-        } else if (usuarioDB.email !== email) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Usuarios de Google no pueden cambiar su cuenta'
-            });
-        }
+        console.log(campos.tecnologia);
 
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
+
+        const perfilActualizado = await Perfil.findByIdAndUpdate(uid, cambiosPerfil, { new: true });
+        //const perfilActualizado = await Perfil.findByIdAndUpdate(uid, campos, ({ $push: { perfilado: perfilado } }), { new: true });
+        //const perfilActualizado2 = await Perfil.findByIdAndUpdate(uid, campos, { new: true });
 
         res.json({
             ok: true,
-            usuario: usuarioActualizado
+            perfil: perfilActualizado,
+            // perfilActualizado2
         });
 
     } catch (error) {
@@ -143,42 +262,15 @@ const actualizarUsuario = async(req, res = response) => {
     }
 };
 
-// Actualizar usuario por Estado
 
-// Borrar usuario
-const borrarUsuario = async(req, res = response) => {
-
-    const uid = req.params.id;
-
-    try {
-
-        const usuarioDB = await Usuario.findById(uid);
-
-        if (!usuarioDB) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'No existe un usuario con ese id'
-            });
-        }
-
-        await Usuario.findByIdAndDelete(uid);
-
-        res.json({
-            ok: true,
-            msg: 'Usuario Eliminado'
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado'
-        });
-    }
-};
 
 
 module.exports = {
     getPerfiles,
-    crearPerfiles
+    crearPerfiles,
+    actualizarPerfil,
+    getPerfilesTecnologia,
+    getPerfilesAreaExperiencia,
+    getPerfilesTecnologia2,
+    getPerfilesTecnologia3
 };

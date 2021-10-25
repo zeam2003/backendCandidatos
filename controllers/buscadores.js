@@ -3,6 +3,7 @@ const { response } = require('express');
 const Usuario = require('../models/usuario');
 const Candidato = require('../models/candidato');
 const Busqueda = require('../models/busqueda');
+const Perfil = require('../models/perfil');
 
 
 // Buscar en todas las colecciones
@@ -13,17 +14,19 @@ const getTodo = async(req, res = response) => {
 
 
 
-    const [usuarios, candidatos, busquedas] = await Promise.all([
+    const [usuarios, candidatos, busquedas, perfiles] = await Promise.all([
         Usuario.find({ nombre: regex }),
         Candidato.find({ nombre: regex }),
         Busqueda.find({ nombre: regex }),
+        Perfil.find({ nombre: regex }),
     ]);
 
     res.json({
         ok: true,
         usuarios,
         candidatos,
-        busquedas
+        busquedas,
+        perfiles
     });
 };
 
@@ -33,24 +36,44 @@ const getDocumentosColeccion = async(req, res = response) => {
 
     const tabla = req.params.tabla;
     const busqueda = req.params.busqueda;
-    const regex = new RegExp(busqueda, 'i');
+
+    RegExp.escape = function(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    };
+
+    term = new RegExp(RegExp.escape(busqueda), "i");
+    console.log(term);
+    const regex = new RegExp(term, 'i');
 
     let data = [];
 
     switch (tabla) {
         case 'candidatos':
             data = await Candidato.find({ nombre: regex })
-                .populate('usuario', 'nombre img')
+                .populate('usuario', 'nombre img perfiladoTecnico perfilEstudios')
                 .populate('busqueda', 'nombre img');
             break;
 
+
         case 'busquedas':
-            data = await Busqueda.find({ nombre: regex })
+            data = await Busqueda.find({ $or: [{ nombre: regex }, { cliente: regex }] })
                 .populate('usuario', 'nombre img');
             break;
 
         case 'usuarios':
             data = await Usuario.find({ nombre: regex });
+            break;
+
+        case 'perfiles':
+            data = await Perfil.find({ perfilado: regex });
+            break;
+
+        case 'tecnologia':
+            data = await Perfil.find({ tecnologia: regex });
+            break;
+
+        case 'perfilado':
+            data = await Perfil.find({ perfilado: regex });
             break;
 
         default:

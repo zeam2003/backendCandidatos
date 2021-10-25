@@ -6,44 +6,46 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 
-const { getUsuarios, crearUsuarios, totalUsuarios, actualizarUsuario, borrarUsuario, verificarEmail } = require('../controllers/usuarios');
+const {
+    getClientes,
+    totalClientes,
+    crearClientes,
+    actualizarClientes,
+    borrarClientes
+} = require('../controllers/clientes');
 const { validarJWT, validarADMIN_ROLE, validarADMIN_ROLE_o_Mismo_Usuario } = require('../middlewares/validar-jwt');
 
 const router = Router();
 
-router.get('/', validarJWT, getUsuarios);
+router.get('/', validarJWT, getClientes);
 
-// Traer Totales de Usuarios
-router.get('/totales/', [
-    validarJWT,
-    totalUsuarios
-]);
-
-router.get('/:campo', verificarEmail);
 
 router.post('/', [
+        validarJWT,
         check('nombre', 'El nombre es oblitario').not().isEmpty(),
-        check('password', 'La contraseña es oblitario').not().isEmpty(),
-        check('email', 'El email es oblitario').isEmail(),
         validarCampos,
     ],
-    crearUsuarios
+    crearClientes
 );
+
+// Traer Totales de Candidatos
+router.get('/totales/', [
+    validarJWT,
+    totalClientes
+]);
 
 router.put('/:id', [
         validarJWT,
         validarADMIN_ROLE_o_Mismo_Usuario,
         // validarADMIN_ROLE_o_mismo_usuario,
         check('nombre', 'El nombre es oblitario').not().isEmpty(),
-        check('email', 'El email es oblitario').isEmail(),
-        check('role', 'El rol es oblitario').not().isEmpty(),
         validarCampos
     ],
-    actualizarUsuario
+    actualizarClientes
 );
 
 router.delete('/:id', [validarJWT, validarADMIN_ROLE],
-    borrarUsuario
+    borrarClientes
 );
 
 module.exports = router;

@@ -28,11 +28,18 @@ app.use('/api/candidatos', require('./routes/candidatos'));
 app.use('/api/todo', require('./routes/buscadores'));
 app.use('/api/upload', require('./routes/uploads'));
 app.use('/api/perfiles', require('./routes/perfiles'));
+app.use('/api/herramientas', require('./routes/herramientas'));
+app.use('/api/tipoentrevista', require('./routes/tipoentrevista'));
+app.use('/api/herramientasos', require('./routes/herramientasos'));
+app.use('/api/herramientasdb', require('./routes/herramientasdb'));
+app.use('/api/herramientasba', require('./routes/herramientasba'));
+app.use('/api/lenguajes', require('./routes/lenguajes'));
+app.use('/api/clientes', require('./routes/clientes'));
 app.use('/api/login', require('./routes/auth'));
 
 // lo ultimo
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public/index.html'));
+app.get('/*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public/candidatos/index.html'));
 });
 
 

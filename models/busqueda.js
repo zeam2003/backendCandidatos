@@ -1,10 +1,11 @@
 const { Schema, model } = require('mongoose');
+const { stringify } = require('uuid');
 
 const estadosValidos = {
-    // 1 = Activo, 0 = "Baja", 2 = "Suspendido"
-    values: ['1', '0', '2'],
+    // 1 = Abierta, 2 = "Stand by", 3 = "Cancelada", 4 ="Perdida", 5 ="Cerrada"
+    values: ['Abierta', 'Stand by', 'Cancelada', 'Perdida', 'Cerrada'],
     message: '{VALUE} no es un estado permitido'
-}
+};
 
 const BusquedaSchema = Schema({
 
@@ -16,7 +17,13 @@ const BusquedaSchema = Schema({
         required: true
     },
     vacantes: {
-        type: String
+        type: Number
+    },
+    vacantesOcupadas: {
+        type: Number
+    },
+    perfil: {
+        type: String,
     },
     detalle: {
         type: String,
@@ -27,21 +34,30 @@ const BusquedaSchema = Schema({
     },
     estado: {
         type: String,
-        default: 1
+        default: "Abierta",
+        enum: estadosValidos
     },
     puesto: {
         type: String
     },
     ultimaModificacion: {
-        type: String,
-        default: 'Sin modificaciones'
-    },
-    creadoPor: {
         type: String
     },
-    modificadoPor: {
+    creadoPor: {
         type: String,
-        default: 'Sin modificaciones'
+    },
+    modificadoPor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario',
+    },
+    rubro: {
+        type: String
+    },
+    sitio: {
+        type: String
+    },
+    cliente: {
+        type: String
     },
     numBusqueda: {
         type: Number

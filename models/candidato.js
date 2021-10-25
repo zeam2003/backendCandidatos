@@ -1,6 +1,12 @@
 const { isMoment } = require('moment');
 const { Schema, model } = require('mongoose');
 
+const estadosValidos = {
+    // 1 = Abierta, 2 = "Stand by", 3 = "Cancelada", 4 ="Perdida", 5 ="Cerrada"
+    values: ['1', '2', '3', '4', '5'],
+    message: '{VALUE} no es un estado permitido'
+};
+
 const CandidatoSchema = Schema({
 
     created: {
@@ -52,7 +58,7 @@ const CandidatoSchema = Schema({
         type: String
     },
     ciudad: {
-        type: String
+        type: String // estado para Mexico
     },
     estadoProvincia: {
         type: String
@@ -132,6 +138,9 @@ const CandidatoSchema = Schema({
     seniority: {
         type: String
     },
+    perfiladoTecnico: {
+        type: String
+    },
     perfilEstudios: {
         type: String
     },
@@ -200,13 +209,16 @@ const CandidatoSchema = Schema({
         type: String
     },
     resultados: {
-        type: String
+        type: String,
+        required: true
     },
     comentarios: {
         type: String
     },
     calificaEntrevista: {
-        type: String
+        type: String,
+        default: 3,
+        enum: estadosValidos
     }
 
 
