@@ -14,12 +14,19 @@ const {
     crearCandidatos,
     actualizarCandidatos,
     borrarCandidatos,
-    getCandidatoById
+    getCandidatoById,
+    verificarEmail,
+    getCandidatoByResultado,
+    getTotalCandidatoByResultado,
+    actualizarResultadoCandidato,
+    totalCandidatos
 } = require('../controllers/candidatos');
 
 const router = Router();
 
 router.get('/', validarJWT, getCandidatos);
+
+router.get('/email/:campo', verificarEmail);
 
 // Crear Candidato
 router.post('/', [
@@ -31,6 +38,24 @@ router.post('/', [
     crearCandidatos
 );
 
+// Traer Totales de Candidatos
+router.get('/totales/', [
+    validarJWT,
+    totalCandidatos
+]);
+
+// Traer Totales 
+router.get('/totalesby/:resultados', [
+    validarJWT,
+    getTotalCandidatoByResultado
+]);
+
+// Traer Candidato por Resultado
+router.get('/resultados/:resultados', [
+    validarJWT,
+    getCandidatoByResultado
+]);
+
 // Actualizar Candidato
 router.put('/:id', [
         validarJWT,
@@ -39,6 +64,15 @@ router.put('/:id', [
         validarCampos
     ],
     actualizarCandidatos
+);
+
+// Actualizar Resultados Candidato
+router.put('/cambiarresultado/:id', [
+        validarJWT,
+        check('resultados', 'El resultado del Candidato es necesario').not().isEmpty(),
+        validarCampos
+    ],
+    actualizarResultadoCandidato
 );
 
 router.delete('/:id',

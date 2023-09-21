@@ -3,6 +3,7 @@ const fs = require('fs');
 const Usuario = require('../models/usuario');
 const Candidato = require('../models/candidato');
 const Busqueda = require('../models/busqueda');
+const Cliente = require('../models/cliente');
 
 
 const borrarImagen = (path) => {
@@ -62,6 +63,21 @@ const actualizarImagen = async(tipo, id, nombreArchivo) => {
 
             busqueda.img = nombreArchivo;
             await busqueda.save();
+            return true;
+            break;
+
+        case 'clientes':
+            const cliente = await Cliente.findById(id);
+            if (!cliente) {
+
+                return false;
+            }
+
+            pathViejo = `./uploads/clientes/${ cliente.img }`;
+            borrarImagen(pathViejo);
+
+            cliente.img = nombreArchivo;
+            await cliente.save();
             return true;
             break;
 

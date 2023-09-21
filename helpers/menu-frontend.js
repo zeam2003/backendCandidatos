@@ -18,8 +18,8 @@ const getMenuFrontEd = (role = 'USER_ROLE') => {
             icono: 'mdi mdi-folder-lock-open',
             submenu: [
                 // { titulo: 'Usuarios', url: 'usuarios'},
-                { titulo: 'Candidatos', url: 'candidatos' },
                 { titulo: 'Busquedas', url: 'busquedas' },
+                { titulo: 'Candidatos', url: 'candidatos' },
                 { titulo: 'Clientes', url: 'clientes' }
             ]
         }
@@ -27,7 +27,7 @@ const getMenuFrontEd = (role = 'USER_ROLE') => {
     ];
 
     if (role === 'ADMIN_ROLE') {
-        menu[1].submenu.unshift({ titulo: 'Usuarios', url: 'usuarios' });
+        menu[1].submenu.unshift({ titulo: 'Usuarios', url: 'usuarios' }, { titulo: 'Varios', url: 'varios' });
     }
 
     return menu;

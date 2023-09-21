@@ -1,17 +1,9 @@
 const { Schema, model } = require('mongoose');
 
-const PerfilSchema = Schema({
+const HerramientasbaSchema = Schema({
 
-    areaExperiencia: {
+    nombre: {
         type: String
-    },
-    tecnologia: {
-        type: String
-    },
-    perfilado: {
-
-        type: Array,
-        default: undefined
     },
     usuario: {
         type: Schema.Types.ObjectId,
@@ -22,11 +14,11 @@ const PerfilSchema = Schema({
         type: String
     }
 
-}, { collection: 'perfiles' });
+}, { collection: 'herramientasba' });
 
-PerfilSchema.method('toJSON', function() {
+HerramientasbaSchema.method('toJSON', function() {
     const { __v, ...object } = this.toObject();
     return object;
 });
 
-module.exports = model('Perfil', PerfilSchema);
+module.exports = model('Herramientasba', HerramientasbaSchema);

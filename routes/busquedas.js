@@ -11,13 +11,33 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const {
     getBusquedas,
     crearBusquedas,
+    contarBusquedas,
+    getBusquedasEstado,
     actualizarBusquedas,
-    borrarBusquedas
+    actualizarEstadoBusqueda,
+    borrarBusquedas,
+    getBusquedasById
 } = require('../controllers/busquedas');
 
 const router = Router();
 
 router.get('/', getBusquedas);
+
+router.get('/:id', [
+    validarJWT,
+    // check('candidato', 'El ID del candidato no es valido').isMongoId(),
+    getBusquedasById
+]);
+
+router.get('/estado/:estado', [
+    validarJWT,
+    getBusquedasEstado
+]);
+
+router.get('/contarbusquedas/totales', [
+    validarJWT,
+    contarBusquedas
+]);
 
 // Crear Busquedas
 router.post('/', [
@@ -35,6 +55,14 @@ router.put('/:id', [
         validarCampos
     ],
     actualizarBusquedas
+);
+
+router.put('/cambiarestado/:id', [
+        validarJWT,
+        check('estado', 'El estado de la búsqueda es necesario').not().isEmpty(),
+        validarCampos
+    ],
+    actualizarEstadoBusqueda
 );
 
 router.delete('/:id',

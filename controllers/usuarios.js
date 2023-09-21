@@ -32,6 +32,31 @@ const getUsuarios = async(req, res) => {
     });
 };
 
+// Total Usuarios
+const totalUsuarios = async(req, res = response) => {
+
+    try {
+        const [total] = await Promise.all([
+            Usuario
+            .find({email: /ecosistemasmexico/}, 'email').count(),
+           // Usuario.countDocuments()
+           // Usuario.countDocuments()
+        ]);
+        res.json({
+            ok: true,
+            //usuarios,
+            total
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            ok: false,
+            msg: 'hable con el administrador'
+        });
+    }
+
+};
+
 const verificarEmail = async(req, res = response) => {
     const email = req.params.campo;
     console.log(email);
@@ -204,6 +229,7 @@ const borrarUsuario = async(req, res = response) => {
 
 module.exports = {
     getUsuarios,
+    totalUsuarios,
     crearUsuarios,
     actualizarUsuario,
     borrarUsuario,
