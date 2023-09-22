@@ -80,7 +80,7 @@ const contarBusquedas = async(req, res = response) => {
             if (err) {
                 res.send(err);
             } else {
-                const found = totales.find((e) => e._id === 'Abiertas' );
+                const found = totales.find((e) => e._id === 'Abierta' );
                 if (found) {
                     console.log('esta ')
                     console.log(totales);
@@ -90,7 +90,7 @@ const contarBusquedas = async(req, res = response) => {
                     });
                 } else {
                     console.log('no encontre nada')
-                    previo._id = 'Abiertas',
+                    previo._id = 'Abierta',
                     previo.total = 0
                     totales.unshift({...previo})
                     console.log(totales);
